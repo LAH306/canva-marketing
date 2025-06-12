@@ -1,971 +1,897 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>可画AI - 时间自由革命</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
-    
-    <!-- Tailwind 配置 -->
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#4F46E5', // 主色调：紫色，代表创新与效率
-                        secondary: '#F97316', // 辅助色：橙色，代表活力与收获
-                        accent: '#10B981', // 强调色：绿色，代表时间的价值与成长
-                        dark: '#1E293B', // 深色：深蓝灰，用于文本
-                        light: '#F8FAFC' // 浅色：接近白色，用于背景
-                    },
-                    fontFamily: {
-                        inter: ['Inter', 'system-ui', 'sans-serif'],
-                    },
-                    animation: {
-                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                        'float': 'float 6s ease-in-out infinite',
-                    },
-                    keyframes: {
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0)' },
-                            '50%': { transform: 'translateY(-10px)' },
-                        }
-                    }
-                },
-            }
-        }
-    </script>
-    
-    <style type="text/tailwindcss">
-        @layer utilities {
-            .content-auto {
-                content-visibility: auto;
-            }
-            .text-shadow {
-                text-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            }
-            .bg-gradient-time {
-                background: linear-gradient(135deg, #4F46E5 0%, #10B981 100%);
-            }
-            .scrollbar-hide {
-                -ms-overflow-style: none;
-                scrollbar-width: none;
-            }
-            .scrollbar-hide::-webkit-scrollbar {
-                display: none;
-            }
-            .time-card {
-                @apply bg-white rounded-xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl hover:-translate-y-1;
-            }
-            .btn-primary {
-                @apply bg-primary text-white font-bold py-3 px-8 rounded-full shadow-lg hover:shadow-xl hover:bg-primary/90 transition-all duration-300 transform hover:-translate-y-1;
-            }
-            .btn-secondary {
-                @apply bg-secondary text-white font-bold py-3 px-8 rounded-full shadow-lg hover:shadow-xl hover:bg-secondary/90 transition-all duration-300 transform hover:-translate-y-1;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>可画AI - 时间自由革命</title>
+  
+  <!-- 引入Tailwind CSS (使用国内CDN) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- 引入Font Awesome图标 (使用国内CDN) -->
+  <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+  <!-- 引入Chart.js图表库 (使用国内CDN) -->
+  <script src="https://cdn.bootcdn.net/ajax/libs/Chart.js/4.4.8/chart.umd.min.js"></script>
+  
+  <!-- Tailwind配置 -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#4F46E5', // 主色调：紫色
+            secondary: '#EC4899', // 辅助色：粉色
+            accent: '#F59E0B', // 强调色：橙色
+            dark: '#1F2937', // 深色
+            light: '#F9FAFB', // 浅色
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+        },
+      }
+    }
+  </script>
+  
+  <!-- 自定义工具类 -->
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .time-card {
+        @apply bg-white rounded-xl shadow-lg p-4 flex flex-col items-center justify-center;
+      }
+      .btn-primary {
+        @apply bg-primary hover:bg-primary/90 text-white font-bold py-3 px-8 rounded-full transition-all duration-300 transform hover:scale-105 hover:shadow-lg;
+      }
+      .btn-secondary {
+        @apply bg-white hover:bg-gray-100 text-primary font-bold py-3 px-8 rounded-full border-2 border-primary transition-all duration-300 transform hover:scale-105;
+      }
+      .section-title {
+        @apply text-[clamp(2rem,5vw,3.5rem)] font-bold text-dark mb-4;
+      }
+      .section-subtitle {
+        @apply text-[clamp(1rem,2vw,1.25rem)] text-gray-600 mb-8 max-w-2xl mx-auto;
+      }
+      .feature-card {
+        @apply bg-white rounded-2xl shadow-xl p-6 transition-all duration-300 hover:shadow-2xl hover:-translate-y-2;
+      }
+    }
+  </style>
 </head>
-<body class="font-inter bg-light text-dark antialiased">
-    <!-- 导航栏 -->
-    <nav id="navbar" class="fixed w-full z-50 transition-all duration-300 bg-white/90 backdrop-blur-md shadow-sm">
-        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
-            <a href="#" class="flex items-center space-x-2">
-                <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-                    <i class="fa fa-magic text-white text-xl"></i>
-                </div>
-                <span class="text-xl font-bold text-primary">可画AI</span>
+
+<body class="bg-light font-sans">
+  <!-- 导航栏 -->
+  <nav id="navbar" class="fixed w-full top-0 z-50 transition-all duration-300 bg-transparent">
+    <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+      <div class="flex items-center">
+        <img src="https://picsum.photos/id/237/60/60" alt="可画AI Logo" class="h-10 w-10 rounded-full">
+        <span class="ml-2 text-xl font-bold text-white">可画AI</span>
+      </div>
+      
+      <!-- 桌面导航 -->
+      <div class="hidden md:flex space-x-8">
+        <a href="#home" class="text-white hover:text-secondary transition-colors">首页</a>
+        <a href="#features" class="text-white hover:text-secondary transition-colors">功能</a>
+        <a href="#stages" class="text-white hover:text-secondary transition-colors">活动阶段</a>
+        <a href="#faq" class="text-white hover:text-secondary transition-colors">常见问题</a>
+      </div>
+      
+      <!-- 移动端菜单按钮 -->
+      <button id="menuBtn" class="md:hidden text-white text-2xl">
+        <i class="fa fa-bars"></i>
+      </button>
+    </div>
+    
+    <!-- 移动端导航菜单 -->
+    <div id="mobileMenu" class="md:hidden bg-white shadow-lg absolute w-full left-0 top-full transform -translate-y-full opacity-0 transition-all duration-300 pointer-events-none">
+      <div class="container mx-auto px-4 py-4 flex flex-col space-y-4">
+        <a href="#home" class="text-dark hover:text-primary transition-colors py-2 border-b border-gray-100">首页</a>
+        <a href="#features" class="text-dark hover:text-primary transition-colors py-2 border-b border-gray-100">功能</a>
+        <a href="#stages" class="text-dark hover:text-primary transition-colors py-2 border-b border-gray-100">活动阶段</a>
+        <a href="#faq" class="text-dark hover:text-primary transition-colors py-2">常见问题</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 英雄区 -->
+  <section id="home" class="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-primary to-secondary text-white overflow-hidden">
+    <!-- 背景装饰 -->
+    <div class="absolute inset-0 opacity-10">
+      <div class="absolute top-0 left-0 w-full h-full bg-[url('https://picsum.photos/id/1/1920/1080')] bg-cover bg-center"></div>
+    </div>
+    
+    <!-- 内容 -->
+    <div class="container mx-auto px-4 py-20 relative z-10 text-center">
+      <h1 class="text-[clamp(2.5rem,8vw,5rem)] font-bold mb-6 leading-tight">
+        可画AI<br>时间自由革命
+      </h1>
+      <p class="text-[clamp(1rem,3vw,1.5rem)] mb-8 max-w-3xl mx-auto">
+        释放创意，让AI为你节省90%的设计时间，开启高效工作新体验
+      </p>
+      
+      <!-- 倒计时 -->
+      <div id="countdown" class="flex flex-wrap justify-center gap-4 mb-12">
+        <div class="time-card w-20 h-20 md:w-28 md:h-28">
+          <span id="days" class="text-3xl md:text-5xl font-bold text-primary">00</span>
+          <span class="text-sm text-gray-500">天</span>
+        </div>
+        <div class="time-card w-20 h-20 md:w-28 md:h-28">
+          <span id="hours" class="text-3xl md:text-5xl font-bold text-primary">00</span>
+          <span class="text-sm text-gray-500">时</span>
+        </div>
+        <div class="time-card w-20 h-20 md:w-28 md:h-28">
+          <span id="minutes" class="text-3xl md:text-5xl font-bold text-primary">00</span>
+          <span class="text-sm text-gray-500">分</span>
+        </div>
+        <div class="time-card w-20 h-20 md:w-28 md:h-28">
+          <span id="seconds" class="text-3xl md:text-5xl font-bold text-primary">00</span>
+          <span class="text-sm text-gray-500">秒</span>
+        </div>
+      </div>
+      
+      <div class="flex flex-col sm:flex-row justify-center gap-4">
+        <a href="#stages" class="btn-primary">了解活动</a>
+        <a href="#register" class="btn-secondary">立即注册</a>
+      </div>
+    </div>
+    
+    <!-- 波浪底部装饰 -->
+    <div class="absolute bottom-0 left-0 w-full overflow-hidden">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 120" class="w-full h-auto">
+        <path fill="#F9FAFB" fill-opacity="1" d="M0,96L48,85.3C96,75,192,53,288,53.3C384,53,480,75,576,80C672,85,768,75,864,69.3C960,64,1056,64,1152,74.7C1248,85,1344,107,1392,117.3L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+      </svg>
+    </div>
+  </section>
+
+  <!-- 功能特点 -->
+  <section id="features" class="py-20 bg-light">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-16">
+        <h2 class="section-title">AI如何改变你的工作方式</h2>
+        <p class="section-subtitle">可画AI为你提供全方位的设计解决方案，让创意无限，效率飞升</p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- 功能卡片1 -->
+        <div class="feature-card">
+          <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-6">
+            <i class="fa fa-bolt text-2xl text-primary"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-4">智能生成</h3>
+          <p class="text-gray-600">输入简单描述，AI即可自动生成专业级设计，节省90%的创意时间</p>
+        </div>
+        
+        <!-- 功能卡片2 -->
+        <div class="feature-card">
+          <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-6">
+            <i class="fa fa-magic text-2xl text-primary"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-4">一键优化</h3>
+          <p class="text-gray-600">自动分析设计元素，提供专业优化建议，让你的作品更具视觉冲击力</p>
+        </div>
+        
+        <!-- 功能卡片3 -->
+        <div class="feature-card">
+          <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-6">
+            <i class="fa fa-share-alt text-2xl text-primary"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-4">多平台适配</h3>
+          <p class="text-gray-600">一键生成多平台设计方案，完美适配从手机到桌面的所有设备</p>
+        </div>
+        
+        <!-- 功能卡片4 -->
+        <div class="feature-card">
+          <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-6">
+            <i class="fa fa-comments text-2xl text-primary"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-4">智能协作</h3>
+          <p class="text-gray-600">实时多人协作，AI辅助团队沟通，提升工作效率和创意产出</p>
+        </div>
+        
+        <!-- 功能卡片5 -->
+        <div class="feature-card">
+          <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-6">
+            <i class="fa fa-line-chart text-2xl text-primary"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-4">数据驱动</h3>
+          <p class="text-gray-600">通过数据分析优化设计决策，让创意更符合用户需求和市场趋势</p>
+        </div>
+        
+        <!-- 功能卡片6 -->
+        <div class="feature-card">
+          <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-6">
+            <i class="fa fa-cloud text-2xl text-primary"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-4">云端存储</h3>
+          <p class="text-gray-600">自动备份所有设计文件，随时随地访问和编辑你的创意作品</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 活动阶段 -->
+  <section id="stages" class="py-20 bg-gray-50">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-16">
+        <h2 class="section-title">活动阶段</h2>
+        <p class="section-subtitle">分阶段参与活动，解锁更多AI设计能力</p>
+      </div>
+      
+      <div class="space-y-20">
+        <!-- 阶段一 -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div>
+            <div class="inline-block px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-semibold mb-4">
+              阶段一：AI基础体验
+            </div>
+            <h3 class="text-3xl font-bold mb-6">探索AI设计的无限可能</h3>
+            <p class="text-gray-600 mb-6">
+              在这个阶段，你将体验可画AI的基础功能，包括智能生成、一键优化和多平台适配。通过简单的文本描述，AI将帮助你创建专业级设计作品。
+            </p>
+            <ul class="space-y-3 mb-8">
+              <li class="flex items-start">
+                <i class="fa fa-check-circle text-primary mt-1 mr-3"></i>
+                <span>30分钟快速入门教程</span>
+              </li>
+              <li class="flex items-start">
+                <i class="fa fa-check-circle text-primary mt-1 mr-3"></i>
+                <span>5个AI生成模板免费使用</span>
+              </li>
+              <li class="flex items-start">
+                <i class="fa fa-check-circle text-primary mt-1 mr-3"></i>
+                <span>个性化推荐设计方案</span>
+              </li>
+            </ul>
+            <a href="#register" class="btn-primary inline-flex items-center">
+              立即开始体验 <i class="fa fa-arrow-right ml-2"></i>
             </a>
-            
-            <!-- 桌面导航 -->
-            <div class="hidden md:flex items-center space-x-8">
-                <a href="#phase1" class="text-dark hover:text-primary font-medium transition-colors">高效提效</a>
-                <a href="#phase2" class="text-dark hover:text-primary font-medium transition-colors">轻松生活</a>
-                <a href="#phase3" class="text-dark hover:text-primary font-medium transition-colors">时间复利</a>
-                <a href="#about" class="text-dark hover:text-primary font-medium transition-colors">关于我们</a>
-                <a href="#" class="btn-primary">免费体验</a>
+          </div>
+          
+          <div class="relative">
+            <div class="bg-white rounded-2xl shadow-xl p-6">
+              <div class="h-64 md:h-80">
+                <canvas id="phase1Chart"></canvas>
+              </div>
+              <div class="mt-6 text-center">
+                <p class="text-sm text-gray-500">用户使用AI设计后效率提升对比</p>
+              </div>
             </div>
-            
-            <!-- 移动端菜单按钮 -->
-            <button id="menuBtn" class="md:hidden text-dark focus:outline-none">
-                <i class="fa fa-bars text-2xl"></i>
+            <!-- 装饰元素 -->
+            <div class="absolute -bottom-6 -right-6 w-24 h-24 bg-secondary rounded-full opacity-20 z-[-1]"></div>
+            <div class="absolute -top-6 -left-6 w-16 h-16 bg-accent rounded-full opacity-20 z-[-1]"></div>
+          </div>
+        </div>
+        
+        <!-- 阶段二 -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div class="lg:order-2">
+            <div class="inline-block px-4 py-2 bg-secondary/10 text-secondary rounded-full text-sm font-semibold mb-4">
+              阶段二：AI高级应用
+            </div>
+            <h3 class="text-3xl font-bold mb-6">掌握AI设计的核心技巧</h3>
+            <p class="text-gray-600 mb-6">
+              在这个阶段，你将深入了解可画AI的高级功能，包括智能协作、数据驱动设计和云端存储。通过团队协作和数据分析，提升你的设计能力和创意产出。
+            </p>
+            <ul class="space-y-3 mb-8">
+              <li class="flex items-start">
+                <i class="fa fa-check-circle text-secondary mt-1 mr-3"></i>
+                <span>高级AI设计工作坊</span>
+              </li>
+              <li class="flex items-start">
+                <i class="fa fa-check-circle text-secondary mt-1 mr-3"></i>
+                <span>团队协作功能免费使用</span>
+              </li>
+              <li class="flex items-start">
+                <i class="fa fa-check-circle text-secondary mt-1 mr-3"></i>
+                <span>设计数据分析报告</span>
+              </li>
+            </ul>
+            <a href="#register" class="btn-secondary inline-flex items-center">
+              升级到高级版 <i class="fa fa-arrow-right ml-2"></i>
+            </a>
+          </div>
+          
+          <div class="lg:order-1 relative">
+            <div class="bg-white rounded-2xl shadow-xl p-6">
+              <img src="https://picsum.photos/id/2/600/400" alt="AI高级应用示例" class="w-full h-auto rounded-lg">
+              <div class="mt-6 text-center">
+                <p class="text-sm text-gray-500">AI高级应用示例：智能协作设计</p>
+              </div>
+            </div>
+            <!-- 装饰元素 -->
+            <div class="absolute -bottom-6 -left-6 w-24 h-24 bg-primary rounded-full opacity-20 z-[-1]"></div>
+            <div class="absolute -top-6 -right-6 w-16 h-16 bg-accent rounded-full opacity-20 z-[-1]"></div>
+          </div>
+        </div>
+        
+        <!-- 阶段三 -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div>
+            <div class="inline-block px-4 py-2 bg-accent/10 text-accent rounded-full text-sm font-semibold mb-4">
+              阶段三：AI创意大师
+            </div>
+            <h3 class="text-3xl font-bold mb-6">成为AI设计领域的专家</h3>
+            <p class="text-gray-600 mb-6">
+              在这个阶段，你将掌握可画AI的全部功能，包括定制化AI模型、行业解决方案和创意灵感库。通过个性化AI训练，打造专属于你的设计风格。
+            </p>
+            <ul class="space-y-3 mb-8">
+              <li class="flex items-start">
+                <i class="fa fa-check-circle text-accent mt-1 mr-3"></i>
+                <span>定制化AI模型训练</span>
+              </li>
+              <li class="flex items-start">
+                <i class="fa fa-check-circle text-accent mt-1 mr-3"></i>
+                <span>行业专属解决方案</span>
+              </li>
+              <li class="flex items-start">
+                <i class="fa fa-check-circle text-accent mt-1 mr-3"></i>
+                <span>创意灵感库无限访问</span>
+              </li>
+            </ul>
+            <a href="#register" class="btn-primary inline-flex items-center">
+              成为创意大师 <i class="fa fa-arrow-right ml-2"></i>
+            </a>
+          </div>
+          
+          <div class="relative">
+            <div class="bg-white rounded-2xl shadow-xl p-6">
+              <div class="h-64 md:h-80">
+                <canvas id="phase2Chart"></canvas>
+              </div>
+              <div class="mt-6 text-center">
+                <p class="text-sm text-gray-500">AI创意大师用户作品满意度</p>
+              </div>
+            </div>
+            <!-- 装饰元素 -->
+            <div class="absolute -bottom-6 -right-6 w-24 h-24 bg-secondary rounded-full opacity-20 z-[-1]"></div>
+            <div class="absolute -top-6 -left-6 w-16 h-16 bg-primary rounded-full opacity-20 z-[-1]"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 数据统计 -->
+  <section class="py-16 bg-primary text-white">
+    <div class="container mx-auto px-4">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+        <div>
+          <div class="text-4xl md:text-5xl font-bold mb-2" id="counter-users">0</div>
+          <p class="text-white/80">全球用户</p>
+        </div>
+        <div>
+          <div class="text-4xl md:text-5xl font-bold mb-2" id="counter-projects">0</div>
+          <p class="text-white/80">完成项目</p>
+        </div>
+        <div>
+          <div class="text-4xl md:text-5xl font-bold mb-2" id="counter-time">0</div>
+          <p class="text-white/80">节省小时</p>
+        </div>
+        <div>
+          <div class="text-4xl md:text-5xl font-bold mb-2" id="counter-satisfaction">0</div>
+          <p class="text-white/80">满意度(%)</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 用户评价 -->
+  <section class="py-20 bg-light">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-16">
+        <h2 class="section-title">用户的声音</h2>
+        <p class="section-subtitle">听听其他用户如何评价可画AI</p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- 评价卡片1 -->
+        <div class="bg-white rounded-2xl shadow-xl p-8">
+          <div class="flex items-center mb-6">
+            <img src="https://picsum.photos/id/1001/60/60" alt="用户头像" class="w-12 h-12 rounded-full mr-4">
+            <div>
+              <h4 class="font-bold">李明</h4>
+              <p class="text-sm text-gray-500">市场总监 @ 科技公司</p>
+            </div>
+          </div>
+          <div class="text-yellow-400 mb-4">
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+          </div>
+          <p class="text-gray-600 italic">
+            "可画AI彻底改变了我们的工作流程，现在我们的设计团队可以在更短的时间内完成更多的项目，创意也更加丰富多样。"
+          </p>
+        </div>
+        
+        <!-- 评价卡片2 -->
+        <div class="bg-white rounded-2xl shadow-xl p-8">
+          <div class="flex items-center mb-6">
+            <img src="https://picsum.photos/id/1002/60/60" alt="用户头像" class="w-12 h-12 rounded-full mr-4">
+            <div>
+              <h4 class="font-bold">张华</h4>
+              <p class="text-sm text-gray-500">自由设计师</p>
+            </div>
+          </div>
+          <div class="text-yellow-400 mb-4">
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star-half-o"></i>
+          </div>
+          <p class="text-gray-600 italic">
+            "作为一名自由设计师，可画AI帮助我节省了大量时间，让我能够接受更多的项目。AI生成的初稿质量非常高，为我提供了很好的创意起点。"
+          </p>
+        </div>
+        
+        <!-- 评价卡片3 -->
+        <div class="bg-white rounded-2xl shadow-xl p-8">
+          <div class="flex items-center mb-6">
+            <img src="https://picsum.photos/id/1003/60/60" alt="用户头像" class="w-12 h-12 rounded-full mr-4">
+            <div>
+              <h4 class="font-bold">王芳</h4>
+              <p class="text-sm text-gray-500">电商运营 @ 服装品牌</p>
+            </div>
+          </div>
+          <div class="text-yellow-400 mb-4">
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+          </div>
+          <p class="text-gray-600 italic">
+            "我们的电商页面需要不断更新图片和设计，可画AI让我们的非设计团队成员也能轻松创建专业级的营销素材，大大提高了我们的运营效率。"
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 常见问题 -->
+  <section id="faq" class="py-20 bg-gray-50">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-16">
+        <h2 class="section-title">常见问题</h2>
+        <p class="section-subtitle">解答你可能有的疑问</p>
+      </div>
+      
+      <div class="max-w-3xl mx-auto">
+        <div class="space-y-4">
+          <!-- FAQ项目1 -->
+          <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+            <button class="faq-toggle w-full text-left px-6 py-4 flex justify-between items-center focus:outline-none">
+              <span class="font-bold">可画AI适合哪些人群使用？</span>
+              <i class="fa fa-chevron-down text-primary transition-transform duration-300"></i>
             </button>
+            <div class="faq-content px-6 pb-4 hidden">
+              <p class="text-gray-600">
+                可画AI适合所有需要进行设计工作的人群，无论你是专业设计师、营销人员、电商运营、自媒体创作者，还是普通企业员工，只要你需要创建设计素材，都可以使用可画AI。
+              </p>
+            </div>
+          </div>
+          
+          <!-- FAQ项目2 -->
+          <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+            <button class="faq-toggle w-full text-left px-6 py-4 flex justify-between items-center focus:outline-none">
+              <span class="font-bold">使用可画AI需要具备设计知识吗？</span>
+              <i class="fa fa-chevron-down text-primary transition-transform duration-300"></i>
+            </button>
+            <div class="faq-content px-6 pb-4 hidden">
+              <p class="text-gray-600">
+                不需要。可画AI的设计理念是"人人都是设计师"，我们的AI系统会自动学习设计原则和美学规则，你只需要提供简单的文本描述，AI就可以帮助你创建专业级的设计作品。
+              </p>
+            </div>
+          </div>
+          
+          <!-- FAQ项目3 -->
+          <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+            <button class="faq-toggle w-full text-left px-6 py-4 flex justify-between items-center focus:outline-none">
+              <span class="font-bold">活动期间有哪些优惠？</span>
+              <i class="fa fa-chevron-down text-primary transition-transform duration-300"></i>
+            </button>
+            <div class="faq-content px-6 pb-4 hidden">
+              <p class="text-gray-600">
+                在本次"时间自由革命"活动期间，新用户注册即可获得30天高级版免费试用，包含所有高级功能。同时，活动期间购买年度会员可享受5折优惠，并额外赠送3个月会员时长。
+              </p>
+            </div>
+          </div>
+          
+          <!-- FAQ项目4 -->
+          <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+            <button class="faq-toggle w-full text-left px-6 py-4 flex justify-between items-center focus:outline-none">
+              <span class="font-bold">如何参加活动的各个阶段？</span>
+              <i class="fa fa-chevron-down text-primary transition-transform duration-300"></i>
+            </button>
+            <div class="faq-content px-6 pb-4 hidden">
+              <p class="text-gray-600">
+                活动分为三个阶段：基础体验、高级应用和创意大师。新用户注册后自动进入基础体验阶段，完成指定任务后可升级到下一阶段。每个阶段都有专属福利和学习资源，帮助你逐步掌握可画AI的全部功能。
+              </p>
+            </div>
+          </div>
+          
+          <!-- FAQ项目5 -->
+          <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+            <button class="faq-toggle w-full text-left px-6 py-4 flex justify-between items-center focus:outline-none">
+              <span class="font-bold">可画AI生成的作品版权归谁所有？</span>
+              <i class="fa fa-chevron-down text-primary transition-transform duration-300"></i>
+            </button>
+            <div class="faq-content px-6 pb-4 hidden">
+              <p class="text-gray-600">
+                根据我们的服务条款，用户使用可画AI生成的作品版权归用户所有。我们鼓励用户自由使用、修改和分享这些作品，但不得用于非法活动或侵犯他人知识产权。
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 注册区域 -->
+  <section id="register" class="py-20 bg-gradient-to-br from-primary to-secondary text-white">
+    <div class="container mx-auto px-4">
+      <div class="max-w-4xl mx-auto bg-white/10 backdrop-blur-md rounded-3xl shadow-2xl p-8 md:p-12">
+        <div class="text-center mb-12">
+          <h2 class="text-[clamp(2rem,5vw,3rem)] font-bold mb-4">立即加入时间自由革命</h2>
+          <p class="text-white/80 text-lg max-w-2xl mx-auto">
+            注册可画AI，开启高效设计之旅，享受AI带来的时间自由
+          </p>
         </div>
         
-        <!-- 移动端导航菜单 -->
-        <div id="mobileMenu" class="md:hidden hidden bg-white shadow-lg absolute w-full">
-            <div class="container mx-auto px-4 py-4 flex flex-col space-y-4">
-                <a href="#phase1" class="text-dark hover:text-primary font-medium py-2 transition-colors">高效提效</a>
-                <a href="#phase2" class="text-dark hover:text-primary font-medium py-2 transition-colors">轻松生活</a>
-                <a href="#phase3" class="text-dark hover:text-primary font-medium py-2 transition-colors">时间复利</a>
-                <a href="#about" class="text-dark hover:text-primary font-medium py-2 transition-colors">关于我们</a>
-                <a href="#" class="btn-primary text-center">免费体验</a>
+        <form class="max-w-2xl mx-auto">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div>
+              <label for="name" class="block text-sm font-medium mb-2">姓名</label>
+              <input type="text" id="name" class="w-full px-4 py-3 bg-white/20 border border-white/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-white/50 text-white placeholder-white/60" placeholder="请输入你的姓名">
             </div>
+            <div>
+              <label for="email" class="block text-sm font-medium mb-2">邮箱</label>
+              <input type="email" id="email" class="w-full px-4 py-3 bg-white/20 border border-white/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-white/50 text-white placeholder-white/60" placeholder="请输入你的邮箱">
+            </div>
+          </div>
+          
+          <div class="mb-6">
+            <label for="company" class="block text-sm font-medium mb-2">公司/组织</label>
+            <input type="text" id="company" class="w-full px-4 py-3 bg-white/20 border border-white/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-white/50 text-white placeholder-white/60" placeholder="请输入你的公司或组织名称">
+          </div>
+          
+          <div class="mb-8">
+            <label class="block text-sm font-medium mb-2">你对哪些功能最感兴趣？（可多选）</label>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <label class="flex items-center">
+                <input type="checkbox" class="w-4 h-4 text-primary rounded focus:ring-primary">
+                <span class="ml-2">智能生成</span>
+              </label>
+              <label class="flex items-center">
+                <input type="checkbox" class="w-4 h-4 text-primary rounded focus:ring-primary">
+                <span class="ml-2">一键优化</span>
+              </label>
+              <label class="flex items-center">
+                <input type="checkbox" class="w-4 h-4 text-primary rounded focus:ring-primary">
+                <span class="ml-2">团队协作</span>
+              </label>
+              <label class="flex items-center">
+                <input type="checkbox" class="w-4 h-4 text-primary rounded focus:ring-primary">
+                <span class="ml-2">数据驱动设计</span>
+              </label>
+            </div>
+          </div>
+          
+          <div class="text-center">
+            <button type="submit" class="btn-primary">
+              立即注册，免费试用30天
+            </button>
+            <p class="mt-4 text-sm text-white/60">
+              注册即表示你同意我们的<a href="#" class="underline">服务条款</a>和<a href="#" class="underline">隐私政策</a>
+            </p>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- 页脚 -->
+  <footer class="bg-dark text-white pt-16 pb-8">
+    <div class="container mx-auto px-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+        <div>
+          <div class="flex items-center mb-6">
+            <img src="https://picsum.photos/id/237/60/60" alt="可画AI Logo" class="h-10 w-10 rounded-full">
+            <span class="ml-2 text-xl font-bold">可画AI</span>
+          </div>
+          <p class="text-gray-400 mb-6">
+            释放创意，让AI为你节省90%的设计时间，开启高效工作新体验
+          </p>
+          <div class="flex space-x-4">
+            <a href="#" class="text-gray-400 hover:text-white transition-colors">
+              <i class="fa fa-facebook"></i>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-white transition-colors">
+              <i class="fa fa-twitter"></i>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-white transition-colors">
+              <i class="fa fa-instagram"></i>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-white transition-colors">
+              <i class="fa fa-linkedin"></i>
+            </a>
+          </div>
         </div>
-    </nav>
-
-    <!-- 英雄区域 -->
-    <header class="pt-32 pb-20 md:pt-40 md:pb-32 bg-gradient-to-br from-primary/5 to-accent/5">
-        <div class="container mx-auto px-4">
-            <div class="flex flex-col md:flex-row items-center">
-                <div class="md:w-1/2 mb-10 md:mb-0">
-                    <h1 class="text-[clamp(2.5rem,5vw,4rem)] font-bold leading-tight text-dark mb-6">
-                        把苦事变快事<br>
-                        <span class="text-primary">可画AI</span>
-                        <span class="text-secondary">快省5小时</span>
-                        <span class="text-accent">慢享生活味</span>
-                    </h1>
-                    <p class="text-lg md:text-xl text-gray-600 mb-8 max-w-lg">
-                        用AI技术消灭设计场景中的「无效时间黑洞」，将节省的时间转化为「生命资本」，夺回你的时间主权。
-                    </p>
-                    <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-                        <a href="#" class="btn-primary text-center">
-                            <i class="fa fa-rocket mr-2"></i>立即体验
-                        </a>
-                        <a href="#phases" class="btn-secondary text-center">
-                            <i class="fa fa-play-circle mr-2"></i>了解活动
-                        </a>
-                    </div>
-                    
-                    <!-- 数据卡片 -->
-                    <div class="mt-12 grid grid-cols-2 gap-4">
-                        <div class="bg-white p-4 rounded-lg shadow-md">
-                            <div class="text-3xl font-bold text-primary mb-1">50%</div>
-                            <div class="text-gray-600 text-sm">设计效率提升</div>
-                        </div>
-                        <div class="bg-white p-4 rounded-lg shadow-md">
-                            <div class="text-3xl font-bold text-secondary mb-1">10万+</div>
-                            <div class="text-gray-600 text-sm">累计省时(小时)</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="md:w-1/2 relative">
-                    <div class="relative z-10">
-                        <img src="https://picsum.photos/id/180/600/400" alt="可画AI节省时间" class="rounded-2xl shadow-2xl w-full">
-                        
-                        <!-- 浮动元素 -->
-                        <div class="absolute -top-6 -left-6 bg-white p-4 rounded-lg shadow-lg animate-float">
-                            <div class="flex items-center space-x-2">
-                                <div class="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
-                                    <i class="fa fa-clock-o text-primary"></i>
-                                </div>
-                                <span class="font-bold">节省5小时</span>
-                            </div>
-                        </div>
-                        <div class="absolute -bottom-6 -right-6 bg-white p-4 rounded-lg shadow-lg animate-float" style="animation-delay: 1s">
-                            <div class="flex items-center space-x-2">
-                                <div class="w-10 h-10 bg-secondary/20 rounded-full flex items-center justify-center">
-                                    <i class="fa fa-coffee text-secondary"></i>
-                                </div>
-                                <span class="font-bold">享受生活</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- 背景装饰 -->
-                    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary/10 rounded-full blur-3xl -z-10"></div>
-                    <div class="absolute top-1/4 right-0 w-64 h-64 bg-secondary/10 rounded-full blur-3xl -z-10"></div>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <!-- 阶段导航 -->
-    <section id="phases" class="py-16 bg-white">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-16">
-                <h2 class="text-[clamp(1.8rem,3vw,2.5rem)] font-bold text-dark mb-4">三阶段时间自由革命</h2>
-                <p class="text-gray-600 max-w-2xl mx-auto">从高效提效到时间复利，可画AI陪你一起，重新定义时间的价值</p>
-            </div>
-            
-            <!-- 阶段导航 -->
-            <div class="flex flex-col md:flex-row justify-center space-y-4 md:space-y-0 md:space-x-8 mb-16">
-                <a href="#phase1" class="phase-tab flex items-center justify-center py-4 px-8 rounded-full bg-primary/10 text-primary font-medium transition-all duration-300 hover:bg-primary hover:text-white">
-                    <span class="phase-number bg-primary text-white w-8 h-8 rounded-full flex items-center justify-center mr-2">1</span>
-                    高效提效
-                </a>
-                <a href="#phase2" class="phase-tab flex items-center justify-center py-4 px-8 rounded-full bg-gray-100 text-gray-600 font-medium transition-all duration-300 hover:bg-secondary hover:text-white">
-                    <span class="phase-number bg-secondary text-white w-8 h-8 rounded-full flex items-center justify-center mr-2">2</span>
-                    轻松生活
-                </a>
-                <a href="#phase3" class="phase-tab flex items-center justify-center py-4 px-8 rounded-full bg-gray-100 text-gray-600 font-medium transition-all duration-300 hover:bg-accent hover:text-white">
-                    <span class="phase-number bg-accent text-white w-8 h-8 rounded-full flex items-center justify-center mr-2">3</span>
-                    时间复利
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <!-- 阶段一：KUAI速高效 -->
-    <section id="phase1" class="py-20 bg-gradient-to-br from-primary/5 to-accent/5">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-16">
-                <h2 class="text-[clamp(1.8rem,3vw,2.5rem)] font-bold text-dark mb-4">阶段一：KUAI速高效</h2>
-                <p class="text-gray-600 max-w-2xl mx-auto">解决设计耗时焦虑，用AI提效功能快速吸引学生与白领，提升模板使用量</p>
-            </div>
-            
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                <div>
-                    <!-- 直播活动卡片 -->
-                    <div class="time-card mb-8">
-                        <div class="flex items-start space-x-4">
-                            <div class="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                                <i class="fa fa-video-camera text-primary text-xl"></i>
-                            </div>
-                            <div>
-                                <h3 class="text-xl font-bold text-dark mb-2">AI暴力提效直播</h3>
-                                <p class="text-gray-600 mb-4">每日12:00/21:00在抖音/B站直播，主持人用可画AI挑战「5分钟做中秋班会PPT」「3分钟改国企宣传海报」</p>
-                                <div class="flex items-center text-sm text-gray-500 mb-4">
-                                    <span class="mr-4"><i class="fa fa-calendar mr-1"></i> 9月1日-30日</span>
-                                    <span><i class="fa fa-clock-o mr-1"></i> 12:00 & 21:00</span>
-                                </div>
-                                <a href="#" class="text-primary font-medium hover:underline flex items-center">
-                                    查看直播日程 <i class="fa fa-arrow-right ml-2"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- 模板闪电战卡片 -->
-                    <div class="time-card">
-                        <div class="flex items-start space-x-4">
-                            <div class="w-12 h-12 bg-secondary/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                                <i class="fa fa-bolt text-secondary text-xl"></i>
-                            </div>
-                            <div>
-                                <h3 class="text-xl font-bold text-dark mb-2">模板闪电战2.0</h3>
-                                <p class="text-gray-600 mb-4">上线「校园+职场双场景急救包」：军训海报、毕业论文答辩模板、国企风述职报告等</p>
-                                <div class="flex flex-wrap gap-2 mb-4">
-                                    <span class="bg-primary/10 text-primary text-xs py-1 px-3 rounded-full">校园模板</span>
-                                    <span class="bg-primary/10 text-primary text-xs py-1 px-3 rounded-full">职场模板</span>
-                                    <span class="bg-primary/10 text-primary text-xs py-1 px-3 rounded-full">节日营销</span>
-                                    <span class="bg-primary/10 text-primary text-xs py-1 px-3 rounded-full">微信表情包</span>
-                                </div>
-                                <a href="#" class="text-primary font-medium hover:underline flex items-center">
-                                    立即领取模板 <i class="fa fa-arrow-right ml-2"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="relative">
-                    <img src="https://picsum.photos/id/1/600/800" alt="阶段一活动展示" class="rounded-2xl shadow-2xl w-full">
-                    
-                    <!-- 数据叠加层 -->
-                    <div class="absolute -bottom-6 -left-6 bg-white p-6 rounded-xl shadow-lg max-w-xs">
-                        <h4 class="font-bold text-dark mb-2">模板使用数据</h4>
-                        <div class="h-48">
-                            <canvas id="phase1Chart"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- 倒计时卡片 -->
-            <div class="mt-20 bg-white rounded-2xl shadow-xl p-8 md:p-12 relative overflow-hidden">
-                <div class="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -translate-y-1/2 translate-x-1/4 blur-3xl"></div>
-                <div class="absolute bottom-0 left-0 w-64 h-64 bg-secondary/5 rounded-full translate-y-1/2 -translate-x-1/4 blur-3xl"></div>
-                
-                <div class="relative z-10 flex flex-col md:flex-row justify-between items-center">
-                    <div class="mb-8 md:mb-0">
-                        <h3 class="text-2xl md:text-3xl font-bold text-dark mb-2">直播活动倒计时</h3>
-                        <p class="text-gray-600">下一场直播将于 <span class="font-medium text-primary">今天 21:00</span> 开始</p>
-                    </div>
-                    
-                    <div class="flex space-x-4">
-                        <div class="countdown-item bg-gray-100 rounded-xl p-4 text-center w-20">
-                            <div class="text-3xl font-bold text-primary days">00</div>
-                            <div class="text-sm text-gray-500">天</div>
-                        </div>
-                        <div class="countdown-item bg-gray-100 rounded-xl p-4 text-center w-20">
-                            <div class="text-3xl font-bold text-primary hours">00</div>
-                            <div class="text-sm text-gray-500">时</div>
-                        </div>
-                        <div class="countdown-item bg-gray-100 rounded-xl p-4 text-center w-20">
-                            <div class="text-3xl font-bold text-primary minutes">00</div>
-                            <div class="text-sm text-gray-500">分</div>
-                        </div>
-                        <div class="countdown-item bg-gray-100 rounded-xl p-4 text-center w-20">
-                            <div class="text-3xl font-bold text-primary seconds">00</div>
-                            <div class="text-sm text-gray-500">秒</div>
-                        </div>
-                    </div>
-                    
-                    <a href="#" class="btn-primary mt-8 md:mt-0">
-                        <i class="fa fa-bell mr-2"></i>设置提醒
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 阶段二：KUAI乐轻松 -->
-    <section id="phase2" class="py-20 bg-white">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-16">
-                <h2 class="text-[clamp(1.8rem,3vw,2.5rem)] font-bold text-dark mb-4">阶段二：KUAI乐轻松</h2>
-                <p class="text-gray-600 max-w-2xl mx-auto">解决形式主义内耗痛点，通过「时间兑换券」系统让用户感知省时价值，提升生活幸福感</p>
-            </div>
-            
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                <div class="order-2 lg:order-1">
-                    <!-- 时间兑换券卡片 -->
-                    <div class="time-card mb-8">
-                        <div class="flex items-start space-x-4">
-                            <div class="w-12 h-12 bg-secondary/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                                <i class="fa fa-ticket text-secondary text-xl"></i>
-                            </div>
-                            <div>
-                                <h3 class="text-xl font-bold text-dark mb-2">时间兑换券系统</h3>
-                                <p class="text-gray-600 mb-4">用户每用AI省1小时得1张「时间券」，可兑换蜜雪冰城月卡、瑞幸咖啡券、花西子体验装等国货联名权益</p>
-                                <div class="flex items-center text-sm text-gray-500 mb-4">
-                                    <span class="mr-4"><i class="fa fa-calendar mr-1"></i> 10月1日-31日</span>
-                                    <span><i class="fa fa-trophy mr-1"></i> 已兑换 5.2万小时</span>
-                                </div>
-                                <a href="#" class="text-secondary font-medium hover:underline flex items-center">
-                                    查看兑换规则 <i class="fa fa-arrow-right ml-2"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- 职场纪录片卡片 -->
-                    <div class="time-card">
-                        <div class="flex items-start space-x-4">
-                            <div class="w-12 h-12 bg-accent/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                                <i class="fa fa-film text-accent text-xl"></i>
-                            </div>
-                            <div>
-                                <h3 class="text-xl font-bold text-dark mb-2">《6点下班的中国青年》纪录片</h3>
-                                <p class="text-gray-600 mb-4">联合新世相跟踪拍摄：00后运营用可画AI准点下班学脱口秀，国企文员省下时间给奶奶拍短视频</p>
-                                <div class="flex items-center text-sm text-gray-500 mb-4">
-                                    <span class="mr-4"><i class="fa fa-calendar mr-1"></i> 10月15日上线</span>
-                                    <span><i class="fa fa-eye mr-1"></i> 预约人数: 12,456</span>
-                                </div>
-                                <a href="#" class="text-accent font-medium hover:underline flex items-center">
-                                    立即预约 <i class="fa fa-arrow-right ml-2"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="order-1 lg:order-2 relative">
-                    <img src="https://picsum.photos/id/20/600/800" alt="阶段二活动展示" class="rounded-2xl shadow-2xl w-full">
-                    
-                    <!-- 数据叠加层 -->
-                    <div class="absolute -top-6 -right-6 bg-white p-6 rounded-xl shadow-lg max-w-xs">
-                        <h4 class="font-bold text-dark mb-2">时间券兑换情况</h4>
-                        <div class="h-48">
-                            <canvas id="phase2Chart"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- 兑换券展示 -->
-            <div class="mt-20">
-                <h3 class="text-2xl font-bold text-dark mb-8 text-center">热门兑换权益</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <!-- 兑换券1 -->
-                    <div class="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl">
-                        <div class="h-48 bg-primary/10 flex items-center justify-center">
-                            <img src="https://picsum.photos/id/26/200/200" alt="蜜雪冰城月卡" class="w-32 h-32 object-contain">
-                        </div>
-                        <div class="p-6">
-                            <h4 class="font-bold text-dark mb-2">蜜雪冰城月卡</h4>
-                            <div class="flex items-center justify-between mb-4">
-                                <div class="text-sm text-gray-500">
-                                    <i class="fa fa-clock-o mr-1"></i> 需10小时
-                                </div>
-                                <div class="text-sm text-primary font-medium">
-                                    已兑换 3,245
-                                </div>
-                            </div>
-                            <button class="w-full py-2 border border-primary text-primary rounded-lg hover:bg-primary hover:text-white transition-colors">
-                                立即兑换
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- 兑换券2 -->
-                    <div class="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl">
-                        <div class="h-48 bg-secondary/10 flex items-center justify-center">
-                            <img src="https://picsum.photos/id/28/200/200" alt="瑞幸咖啡券" class="w-32 h-32 object-contain">
-                        </div>
-                        <div class="p-6">
-                            <h4 class="font-bold text-dark mb-2">瑞幸咖啡券</h4>
-                            <div class="flex items-center justify-between mb-4">
-                                <div class="text-sm text-gray-500">
-                                    <i class="fa fa-clock-o mr-1"></i> 需5小时
-                                </div>
-                                <div class="text-sm text-primary font-medium">
-                                    已兑换 4,872
-                                </div>
-                            </div>
-                            <button class="w-full py-2 border border-primary text-primary rounded-lg hover:bg-primary hover:text-white transition-colors">
-                                立即兑换
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- 兑换券3 -->
-                    <div class="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl">
-                        <div class="h-48 bg-accent/10 flex items-center justify-center">
-                            <img src="https://picsum.photos/id/29/200/200" alt="花西子体验装" class="w-32 h-32 object-contain">
-                        </div>
-                        <div class="p-6">
-                            <h4 class="font-bold text-dark mb-2">花西子体验装</h4>
-                            <div class="flex items-center justify-between mb-4">
-                                <div class="text-sm text-gray-500">
-                                    <i class="fa fa-clock-o mr-1"></i> 需15小时
-                                </div>
-                                <div class="text-sm text-primary font-medium">
-                                    已兑换 1,893
-                                </div>
-                            </div>
-                            <button class="w-full py-2 border border-primary text-primary rounded-lg hover:bg-primary hover:text-white transition-colors">
-                                立即兑换
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- 兑换券4 -->
-                    <div class="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl">
-                        <div class="h-48 bg-gray-100 flex items-center justify-center">
-                            <img src="https://picsum.photos/id/30/200/200" alt="职场充电包" class="w-32 h-32 object-contain">
-                        </div>
-                        <div class="p-6">
-                            <h4 class="font-bold text-dark mb-2">职场充电包</h4>
-                            <div class="flex items-center justify-between mb-4">
-                                <div class="text-sm text-gray-500">
-                                    <i class="fa fa-clock-o mr-1"></i> 需20小时
-                                </div>
-                                <div class="text-sm text-primary font-medium">
-                                    已兑换 956
-                                </div>
-                            </div>
-                            <button class="w-full py-2 border border-primary text-primary rounded-lg hover:bg-primary hover:text-white transition-colors">
-                                立即兑换
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 阶段三：KUAI也是慢 -->
-    <section id="phase3" class="py-20 bg-gradient-to-br from-accent/5 to-secondary/5">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-16">
-                <h2 class="text-[clamp(1.8rem,3vw,2.5rem)] font-bold text-dark mb-4">阶段三：KUAI也是慢</h2>
-                <p class="text-gray-600 max-w-2xl mx-auto">解决省时价值不可见问题，通过「时间储蓄罐」功能让用户直观看到「时间资产」，实现时间复利</p>
-            </div>
-            
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                <div>
-                    <!-- 时间储蓄罐卡片 -->
-                    <div class="time-card mb-8">
-                        <div class="flex items-start space-x-4">
-                            <div class="w-12 h-12 bg-accent/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                                <i class="fa fa-piggy-bank text-accent text-xl"></i>
-                            </div>
-                            <div>
-                                <h3 class="text-xl font-bold text-dark mb-2">时间储蓄罐功能</h3>
-                                <p class="text-gray-600 mb-4">新增「时间仪表盘」自动统计每周省时，换算为生活场景，生成《时间资产负债表》，显示「模板复用节省24.5小时」等明细</p>
-                                <div class="flex flex-wrap gap-2 mb-4">
-                                    <span class="bg-accent/10 text-accent text-xs py-1 px-3 rounded-full">时间统计</span>
-                                    <span class="bg-accent/10 text-accent text-xs py-1 px-3 rounded-full">资产报表</span>
-                                    <span class="bg-accent/10 text-accent text-xs py-1 px-3 rounded-full">社交分享</span>
-                                </div>
-                                <a href="#" class="text-accent font-medium hover:underline flex items-center">
-                                    查看我的时间资产 <i class="fa fa-arrow-right ml-2"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- 慢生活投资大赛卡片 -->
-                    <div class="time-card">
-                        <div class="flex items-start space-x-4">
-                            <div class="w-12 h-12 bg-secondary/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                                <i class="fa fa-trophy text-secondary text-xl"></i>
-                            </div>
-                            <div>
-                                <h3 class="text-xl font-bold text-dark mb-2">#省出1万小时慢生活#大赛</h3>
-                                <p class="text-gray-600 mb-4">邀请用户晒省时记录+生活成果："用可画省30小时，写完网文首章"，TOP100故事拍成《时间复利者》微电影</p>
-                                <div class="flex items-center text-sm text-gray-500 mb-4">
-                                    <span class="mr-4"><i class="fa fa-calendar mr-1"></i> 11月1日-30日</span>
-                                    <span><i class="fa fa-users mr-1"></i> 参与人数: 8,762</span>
-                                </div>
-                                <a href="#" class="text-secondary font-medium hover:underline flex items-center">
-                                    立即参赛 <i class="fa fa-arrow-right ml-2"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="relative">
-                    <img src="https://picsum.photos/id/26/600/800" alt="阶段三活动展示" class="rounded-2xl shadow-2xl w-full">
-                    
-                    <!-- 时间资产报表叠加层 -->
-                    <div class="absolute -bottom-6 -left-6 bg-white p-6 rounded-xl shadow-lg max-w-xs">
-                        <h4 class="font-bold text-dark mb-2">我的时间资产</h4>
-                        <div class="mb-4">
-                            <div class="flex justify-between mb-1">
-                                <span class="text-sm text-gray-600">本周总省时</span>
-                                <span class="font-bold">12.5小时</span>
-                            </div>
-                            <div class="flex justify-between mb-1">
-                                <span class="text-sm text-gray-600">可兑换迪士尼烟花秀</span>
-                                <span class="font-bold">2次</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-sm text-gray-600">时间资产排名</span>
-                                <span class="font-bold text-primary">#4,231</span>
-                            </div>
-                        </div>
-                        <button class="w-full py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors">
-                            生成详细报告
-                        </button>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- 用户案例展示 -->
-            <div class="mt-20">
-                <h3 class="text-2xl font-bold text-dark mb-8 text-center">慢生活投资大赛优秀案例</h3>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <!-- 案例1 -->
-                    <div class="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl">
-                        <div class="h-48 bg-cover bg-center" style="background-image: url('https://picsum.photos/id/20/600/400')"></div>
-                        <div class="p-6">
-                            <div class="flex items-center mb-4">
-                                <img src="https://picsum.photos/id/64/100/100" alt="用户头像" class="w-12 h-12 rounded-full mr-4">
-                                <div>
-                                    <h4 class="font-bold text-dark">张小明</h4>
-                                    <p class="text-sm text-gray-500">新媒体运营</p>
-                                </div>
-                            </div>
-                            <p class="text-gray-600 mb-4">"用可画省30小时，写完网文首章，终于迈出了梦想的第一步。"</p>
-                            <div class="flex justify-between items-center">
-                                <div class="flex items-center text-sm text-gray-500">
-                                    <i class="fa fa-clock-o mr-1"></i> 省30小时
-                                </div>
-                                <button class="text-primary hover:text-primary/80">
-                                    <i class="fa fa-heart-o"></i> 点赞
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- 案例2 -->
-                    <div class="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl">
-                        <div class="h-48 bg-cover bg-center" style="background-image: url('https://picsum.photos/id/21/600/400')"></div>
-                        <div class="p-6">
-                            <div class="flex items-center mb-4">
-                                <img src="https://picsum.photos/id/65/100/100" alt="用户头像" class="w-12 h-12 rounded-full mr-4">
-                                <div>
-                                    <h4 class="font-bold text-dark">李小红</h4>
-                                    <p class="text-sm text-gray-500">国企文员</p>
-                                </div>
-                            </div>
-                            <p class="text-gray-600 mb-4">"省15小时，给爷爷拍了人生第一部Vlog，记录了他的青春岁月。"</p>
-                            <div class="flex justify-between items-center">
-                                <div class="flex items-center text-sm text-gray-500">
-                                    <i class="fa fa-clock-o mr-1"></i> 省15小时
-                                </div>
-                                <button class="text-primary hover:text-primary/80">
-                                    <i class="fa fa-heart-o"></i> 点赞
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- 案例3 -->
-                    <div class="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl">
-                        <div class="h-48 bg-cover bg-center" style="background-image: url('https://picsum.photos/id/22/600/400')"></div>
-                        <div class="p-6">
-                            <div class="flex items-center mb-4">
-                                <img src="https://picsum.photos/id/66/100/100" alt="用户头像" class="w-12 h-12 rounded-full mr-4">
-                                <div>
-                                    <h4 class="font-bold text-dark">王大力</h4>
-                                    <p class="text-sm text-gray-500">大学生</p>
-                                </div>
-                            </div>
-                            <p class="text-gray-600 mb-4">"用可画AI节省了毕业设计的时间，参加了人生第一次马拉松比赛。"</p>
-                            <div class="flex justify-between items-center">
-                                <div class="flex items-center text-sm text-gray-500">
-                                    <i class="fa fa-clock-o mr-1"></i> 省25小时
-                                </div>
-                                <button class="text-primary hover:text-primary/80">
-                                    <i class="fa fa-heart-o"></i> 点赞
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="text-center mt-10">
-                    <a href="#" class="btn-secondary">
-                        <i class="fa fa-th-list mr-2"></i>查看更多案例
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 关于我们 -->
-    <section id="about" class="py-20 bg-white">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-16">
-                <h2 class="text-[clamp(1.8rem,3vw,2.5rem)] font-bold text-dark mb-4">关于我们</h2>
-                <p class="text-gray-600 max-w-2xl mx-auto">可画AI致力于用技术重新定义时间的价值，帮助用户摆脱无效劳动，享受生活的美好</p>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                <!-- 数据卡片1 -->
-                <div class="bg-white rounded-xl shadow-md p-8 text-center transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-                    <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <i class="fa fa-users text-primary text-2xl"></i>
-                    </div>
-                    <h3 class="text-4xl font-bold text-dark mb-2">500万+</h3>
-                    <p class="text-gray-600">全球用户</p>
-                </div>
-                
-                <!-- 数据卡片2 -->
-                <div class="bg-white rounded-xl shadow-md p-8 text-center transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-                    <div class="w-16 h-16 bg-secondary/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <i class="fa fa-clock-o text-secondary text-2xl"></i>
-                    </div>
-                    <h3 class="text-4xl font-bold text-dark mb-2">1亿+</h3>
-                    <p class="text-gray-600">节省小时数</p>
-                </div>
-                
-                <!-- 数据卡片3 -->
-                <div class="bg-white rounded-xl shadow-md p-8 text-center transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-                    <div class="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <i class="fa fa-file-image-o text-accent text-2xl"></i>
-                    </div>
-                    <h3 class="text-4xl font-bold text-dark mb-2">300万+</h3>
-                    <p class="text-gray-600">设计模板</p>
-                </div>
-                
-                <!-- 数据卡片4 -->
-                <div class="bg-white rounded-xl shadow-md p-8 text-center transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <i class="fa fa-star text-gray-500 text-2xl"></i>
-                    </div>
-                    <h3 class="text-4xl font-bold text-dark mb-2">4.8/5</h3>
-                    <p class="text-gray-600">用户评分</p>
-                </div>
-            </div>
-            
-            <!-- 合作伙伴 -->
-            <div class="mt-20">
-                <h3 class="text-2xl font-bold text-dark mb-8 text-center">合作伙伴</h3>
-                <div class="flex flex-wrap justify-center items-center gap-8">
-                    <div class="h-16 opacity-50 hover:opacity-100 transition-opacity">
-                        <img src="https://picsum.photos/id/30/200/80" alt="合作伙伴1" class="h-full object-contain">
-                    </div>
-                    <div class="h-16 opacity-50 hover:opacity-100 transition-opacity">
-                        <img src="https://picsum.photos/id/31/200/80" alt="合作伙伴2" class="h-full object-contain">
-                    </div>
-                    <div class="h-16 opacity-50 hover:opacity-100 transition-opacity">
-                        <img src="https://picsum.photos/id/32/200/80" alt="合作伙伴3" class="h-full object-contain">
-                    </div>
-                    <div class="h-16 opacity-50 hover:opacity-100 transition-opacity">
-                        <img src="https://picsum.photos/id/33/200/80" alt="合作伙伴4" class="h-full object-contain">
-                    </div>
-                    <div class="h-16 opacity-50 hover:opacity-100 transition-opacity">
-                        <img src="https://picsum.photos/id/34/200/80" alt="合作伙伴5" class="h-full object-contain">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 订阅区域 -->
-    <section class="py-20 bg-gradient-to-br from-primary/10 to-accent/10">
-        <div class="container mx-auto px-4">
-            <div class="max-w-3xl mx-auto text-center">
-                <h2 class="text-[clamp(1.8rem,3vw,2.5rem)] font-bold text-dark mb-4">加入时间自由革命</h2>
-                <p class="text-gray-600 mb-8">订阅我们的邮件，获取最新活动信息和时间管理技巧</p>
-                
-                <form class="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto">
-                    <input type="email" placeholder="输入你的邮箱地址" class="flex-1 py-3 px-6 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary/50">
-                    <button type="submit" class="btn-primary whitespace-nowrap">
-                        <i class="fa fa-paper-plane mr-2"></i>立即订阅
-                    </button>
-                </form>
-                
-                <p class="text-sm text-gray-500 mt-4">我们尊重你的隐私，绝不会向第三方分享你的信息</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- 页脚 -->
-    <footer class="bg-dark text-white py-16">
-        <div class="container mx-auto px-4">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
-                <div>
-                    <div class="flex items-center space-x-2 mb-6">
-                        <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
-                            <i class="fa fa-magic text-primary text-xl"></i>
-                        </div>
-                        <span class="text-xl font-bold text-white">可画AI</span>
-                    </div>
-                    <p class="text-gray-400 mb-6">重新定义时间的价值，让设计变得简单高效</p>
-                    <div class="flex space-x-4">
-                        <a href="#" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary transition-colors">
-                            <i class="fa fa-weibo"></i>
-                        </a>
-                        <a href="#" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary transition-colors">
-                            <i class="fa fa-wechat"></i>
-                        </a>
-                        <a href="#" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary transition-colors">
-                            <i class="fa fa-bilibili"></i>
-                        </a>
-                        <a href="#" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary transition-colors">
-                            <i class="fa fa-instagram"></i>
-                        </a>
-                    </div>
-                </div>
-                
-                <div>
-                    <h4 class="text-lg font-bold mb-6">产品</h4>
-                    <ul class="space-y-4">
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">模板中心</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">AI功能</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">企业版</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">价格</a></li>
-                    </ul>
-                </div>
-                
-                <div>
-                    <h4 class="text-lg font-bold mb-6">资源</h4>
-                    <ul class="space-y-4">
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">帮助中心</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">教程</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">博客</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">社区</a></li>
-                    </ul>
-                </div>
-                
-                <div>
-                    <h4 class="text-lg font-bold mb-6">联系我们</h4>
-                    <ul class="space-y-4">
-                        <li class="flex items-start space-x-3">
-                            <i class="fa fa-map-marker mt-1 text-gray-400"></i>
-                            <span class="text-gray-400">北京市朝阳区XX大厦A座10层</span>
-                        </li>
-                        <li class="flex items-center space-x-3">
-                            <i class="fa fa-phone text-gray-400"></i>
-                            <span class="text-gray-400">400-123-4567</span>
-                        </li>
-                        <li class="flex items-center space-x-3">
-                            <i class="fa fa-envelope text-gray-400"></i>
-                            <span class="text-gray-400">contact@canva.com</span>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
-                <p class="text-gray-500 text-sm mb-4 md:mb-0">© 2024 可画AI. 保留所有权利</p>
-                <div class="flex space-x-6">
-                    <a href="#" class="text-gray-500 hover:text-white text-sm transition-colors">隐私政策</a>
-                    <a href="#" class="text-gray-500 hover:text-white text-sm transition-colors">服务条款</a>
-                    <a href="#" class="text-gray-500 hover:text-white text-sm transition-colors">Cookie政策</a>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-    <!-- 返回顶部按钮 -->
-    <button id="backToTop" class="fixed bottom-8 right-8 w-12 h-12 bg-primary rounded-full flex items-center justify-center text-white shadow-lg opacity-0 invisible transition-all duration-300 hover:bg-primary/90">
-        <i class="fa fa-arrow-up"></i>
-    </button>
-
-    <!-- JavaScript -->
-    <script>
-        // 导航栏滚动效果
-        const navbar = document.getElementById('navbar');
-        const backToTop = document.getElementById('backToTop');
         
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 50) {
-                navbar.classList.add('py-2', 'shadow-md');
-                navbar.classList.remove('py-4', 'shadow-sm');
-                backToTop.classList.remove('opacity-0', 'invisible');
-                backToTop.classList.add('opacity-100', 'visible');
-            } else {
-                navbar.classList.add('py-4', 'shadow-sm');
-                navbar.classList.remove('py-2', 'shadow-md');
-                backToTop.classList.add('opacity-0', 'invisible');
-                backToTop.classList.remove('opacity-100', 'visible');
-            }
-        });
+        <div>
+          <h4 class="text-lg font-bold mb-6">产品</h4>
+          <ul class="space-y-3">
+            <li><a href="#" class="text-gray-400 hover:text-white transition-colors">功能介绍</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white transition-colors">定价方案</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white transition-colors">使用教程</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white transition-colors">API文档</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white transition-colors">更新日志</a></li>
+          </ul>
+        </div>
         
-        // 返回顶部
-        backToTop.addEventListener('click', () => {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
-        });
+        <div>
+          <h4 class="text-lg font-bold mb-6">资源</h4>
+          <ul class="space-y-3">
+            <li><a href="#" class="text-gray-400 hover:text-white transition-colors">帮助中心</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white transition-colors">设计模板</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white transition-colors">案例研究</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white transition-colors">博客文章</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white transition-colors">社区论坛</a></li>
+          </ul>
+        </div>
         
-        // 移动端菜单
-        const menuBtn = document.getElementById('menuBtn');
-        const mobileMenu = document.getElementById('mobileMenu');
+        <div>
+          <h4 class="text-lg font-bold mb-6">联系我们</h4>
+          <ul class="space-y-3">
+            <li class="flex items-start">
+              <i class="fa fa-map-marker text-primary mt-1 mr-3"></i>
+              <span class="text-gray-400">北京市海淀区中关村科技园区</span>
+            </li>
+            <li class="flex items-start">
+              <i class="fa fa-envelope text-primary mt-1 mr-3"></i>
+              <span class="text-gray-400">contact@canva-ai.com</span>
+            </li>
+            <li class="flex items-start">
+              <i class="fa fa-phone text-primary mt-1 mr-3"></i>
+              <span class="text-gray-400">+86 10 1234 5678</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="border-t border-gray-800 pt-8">
+        <div class="flex flex-col md:flex-row justify-between items-center">
+          <p class="text-gray-500 text-sm mb-4 md:mb-0">
+            &copy; 2023 可画AI科技有限公司. 保留所有权利.
+          </p>
+          <div class="flex space-x-6">
+            <a href="#" class="text-gray-500 hover:text-white text-sm transition-colors">隐私政策</a>
+            <a href="#" class="text-gray-500 hover:text-white text-sm transition-colors">服务条款</a>
+            <a href="#" class="text-gray-500 hover:text-white text-sm transition-colors">Cookie政策</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JavaScript -->
+  <script>
+    // 导航栏滚动效果
+    window.addEventListener('scroll', function() {
+      const navbar = document.getElementById('navbar');
+      if (window.scrollY > 50) {
+        navbar.classList.add('bg-primary', 'shadow-md');
+        navbar.classList.remove('bg-transparent');
+      } else {
+        navbar.classList.add('bg-transparent');
+        navbar.classList.remove('bg-primary', 'shadow-md');
+      }
+    });
+    
+    // 移动端菜单切换
+    document.getElementById('menuBtn').addEventListener('click', function() {
+      const mobileMenu = document.getElementById('mobileMenu');
+      if (mobileMenu.classList.contains('opacity-0')) {
+        mobileMenu.classList.remove('opacity-0', '-translate-y-full', 'pointer-events-none');
+        mobileMenu.classList.add('opacity-100', 'translate-y-0', 'pointer-events-auto');
+        document.getElementById('menuBtn').innerHTML = '<i class="fa fa-times"></i>';
+      } else {
+        mobileMenu.classList.add('opacity-0', '-translate-y-full', 'pointer-events-none');
+        mobileMenu.classList.remove('opacity-100', 'translate-y-0', 'pointer-events-auto');
+        document.getElementById('menuBtn').innerHTML = '<i class="fa fa-bars"></i>';
+      }
+    });
+    
+    // 平滑滚动
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
         
-        menuBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-            if (mobileMenu.classList.contains('hidden')) {
-                menuBtn.innerHTML = '<i class="fa fa-bars text-2xl"></i>';
-            } else {
-                menuBtn.innerHTML = '<i class="fa fa-times text-2xl"></i>';
-            }
-        });
+        const targetId = this.getAttribute('href');
+        const targetElement = document.querySelector(targetId);
         
-        // 平滑滚动
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                
-                const targetId = this.getAttribute('href');
-                if (targetId === '#') return;
-                
-                const targetElement = document.querySelector(targetId);
-                if (targetElement) {
-                    // 关闭移动菜单（如果打开）
-                    if (!mobileMenu.classList.contains('hidden')) {
-                        mobileMenu.classList.add('hidden');
-                        menuBtn.innerHTML = '<i class="fa fa-bars text-2xl"></i>';
-                    }
-                    
-                    // 滚动到目标位置
-                    window.scrollTo({
-                        top: targetElement.offsetTop - 80,
-                        behavior: 'smooth'
-                    });
-                    
-                    // 更新导航标签样式
-                    document.querySelectorAll('.phase-tab').forEach(tab => {
-                        tab.classList.remove('bg-primary', 'text-white');
-                        tab.classList.add('bg-gray-100', 'text-gray-600');
-                    });
-                    
-                    const activeTab = document.querySelector(`a[href="${targetId}"]`);
-                    if (activeTab) {
-                        activeTab.classList.remove('bg-gray-100', 'text-gray-600');
-                        activeTab.classList.add('bg-primary', 'text-white');
-                    }
-                }
-            });
-        });
-        
-        // 倒计时功能
-        function updateCountdown() {
-            const now = new Date();
-            const targetTime = new Date(now);
-            targetTime.setHours(21, 0, 0, 0);
-            
-            if (now > targetTime) {
-                // 如果当前时间已过21:00，设置为明天的21:00
-                targetTime.setDate(targetTime.getDate() + 1);
-            }
-            
-            const diff = targetTime - now;
-            
-            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-            
-            document.querySelector('.days').textContent = days.toString().padStart(2, '0');
-            document.querySelector('.hours').textContent = hours.toString().padStart(2, '0');
-            document.querySelector('.minutes').textContent = minutes.toString().padStart(2, '0');
-            document.querySelector('.seconds').textContent = seconds.toString().padStart(2, '0');
+        if (targetElement) {
+          window.scrollTo({
+            top: targetElement.offsetTop - 80,
+            behavior: 'smooth'
+          });
+          
+          // 关闭移动端菜单
+          const mobileMenu = document.getElementById('mobileMenu');
+          if (!mobileMenu.classList.contains('opacity-0')) {
+            mobileMenu.classList.add('opacity-0', '-translate-y-full', 'pointer-events-none');
+            mobileMenu.classList.remove('opacity-100', 'translate-y-0', 'pointer-events-auto');
+            document.getElementById('menuBtn').innerHTML = '<i class="fa fa-bars"></i>';
+          }
         }
+      });
+    });
+    
+    // 倒计时功能
+    function updateCountdown() {
+      // 设置活动结束日期（示例：2023年12月31日）
+      const endDate = new Date('2023-12-31T23:59:59').getTime();
+      const now = new Date().getTime();
+      const distance = endDate - now;
+      
+      // 计算天、时、分、秒
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+      
+      // 更新DOM
+      document.getElementById('days').innerText = days.toString().padStart(2, '0');
+      document.getElementById('hours').innerText = hours.toString().padStart(2, '0');
+      document.getElementById('minutes').innerText = minutes.toString().padStart(2, '0');
+      document.getElementById('seconds').innerText = seconds.toString().padStart(2, '0');
+      
+      // 如果活动已结束
+      if (distance < 0) {
+        clearInterval(countdownInterval);
+        document.getElementById('countdown').innerHTML = '<div class="text-white text-xl font-bold">活动已结束</div>';
+      }
+    }
+    
+    // 立即执行一次，然后每秒更新一次
+    updateCountdown();
+    const countdownInterval = setInterval(updateCountdown, 1000);
+    
+    // 初始化图表
+    window.addEventListener('load', function() {
+      // 阶段一图表
+      const phase1Ctx = document.getElementById('phase1Chart').getContext('2d');
+      new Chart(phase1Ctx, {
+        type: 'bar',
+        data: {
+          labels: ['使用前', '使用后'],
+          datasets: [{
+            label: '设计效率 (小时/项目)',
+            data: [8, 1.2],
+            backgroundColor: [
+              'rgba(79, 70, 229, 0.5)',
+              'rgba(79, 70, 229, 1)'
+            ],
+            borderColor: [
+              'rgba(79, 70, 229, 1)',
+              'rgba(79, 70, 229, 1)'
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 10
+            }
+          }
+        }
+      });
+      
+      // 阶段二图表
+      const phase2Ctx = document.getElementById('phase2Chart').getContext('2d');
+      new Chart(phase2Ctx, {
+        type: 'radar',
+        data: {
+          labels: ['创意性', '专业性', '一致性', '效率', '用户满意度'],
+          datasets: [{
+            label: '普通设计师',
+            data: [70, 65, 60, 55, 65],
+            backgroundColor: 'rgba(236, 72, 153, 0.2)',
+            borderColor: 'rgba(236, 72, 153, 1)',
+            pointBackgroundColor: 'rgba(236, 72, 153, 1)',
+            pointBorderColor: '#fff',
+            pointHoverBackgroundColor: '#fff',
+            pointHoverBorderColor: 'rgba(236, 72, 153, 1)'
+          }, {
+            label: 'AI创意大师',
+            data: [90, 95, 90, 85, 95],
+            backgroundColor: 'rgba(79, 70, 229, 0.2)',
+            borderColor: 'rgba(79, 70, 229, 1)',
+            pointBackgroundColor: 'rgba(79, 70, 229, 1)',
+            pointBorderColor: '#fff',
+            pointHoverBackgroundColor: '#fff',
+            pointHoverBorderColor: 'rgba(79, 70, 229, 1)'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            r: {
+              angleLines: {
+                display: true
+              },
+              suggestedMin: 0,
+              suggestedMax: 100
+            }
+          }
+        }
+      });
+    });
+    
+    // 数字计数动画
+    function animateCounter(elementId, target, duration = 2000) {
+      const element = document.getElementById(elementId);
+      if (!element) return;
+      
+      let start = 0;
+      const increment = target / (duration / 16);
+      
+      const timer = setInterval(() => {
+        start += increment;
+        if (start >= target) {
+          element.innerText = target;
+          clearInterval(timer);
+        } else {
+          element.innerText = Math.floor(start);
+        }
+      }, 16);
+    }
+    
+    // 监听元素是否进入视口
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          // 启动计数器动画
+          animateCounter('counter-users', 500000);
+          animateCounter('counter-projects', 1200000);
+          animateCounter('counter-time', 25000000);
+          animateCounter('counter-satisfaction', 95);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.5 });
+    
+    // 监听计数器区域
+    const counterSection = document.querySelector('#counter-users').parentElement.parentElement.parentElement;
+    if (counterSection) {
+      observer.observe(counterSection);
+    }
+    
+    // FAQ折叠功能
+    document.querySelectorAll('.faq-toggle').forEach(toggle => {
+      toggle.addEventListener('click', function() {
+        const content = this.nextElementSibling;
+        const icon = this.querySelector('i');
         
-        // 初始化倒计时
-        updateCountdown();
-        setInterval(updateCountdown, 1000);
-        
-        // 图表初始化
-        window.addEventListener('load', function() {
-            // 阶段一图表
-            const phase1Ctx = document.getElementById('phase1Chart').getContext('2d');
-            new Chart(phase1Ctx, {
-                type: 'line',
-                data: {
-                    labels: ['9/1', '9/8', '9/15', '9/22', '9/29'],
-                    datasets: [{
-                        label: '模板使用量(万)',
-                        data: [12, 19, 25, 32, 40],
-                        borderColor: '#4F46E5',
-                        backgroundColor: 'rgba(79, 70, 229, 0.1)',
-                        tension: 0.3,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
-            
-            // 阶段二图表
-            const phase2Ctx = document.getElementById('phase2Chart').getContext('2d');
-            new Chart(phase2Ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['蜜雪冰城', '瑞幸咖啡', '花西子', '职场充电'],
-                    datasets: [{
-                        label: '兑换数量(万)',
-                        data: [1.2, 1.8, 0.8, 0.5],
-                        backgroundColor: [
-                            'rgba(79, 70, 229, 0.7)',
-                            'rgba(249, 115, 22, 0.7)',
-                            'rgba(16, 185, 129, 0.7)',
-                            'rgba(107, 114, 128, 0.7)'
-                        ],
-                        borderRadius: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
-        });
-    </script>
+        if (content.classList.contains('hidden')) {
+          content.classList.remove('hidden');
+          icon.classList.add('rotate-180');
+        } else {
+          content.classList.add('hidden');
+          icon.classList.remove('rotate-180');
+        }
+      });
+    });
+  </script>
 </body>
 </html>
